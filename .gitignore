@@ -50,4 +50,5 @@ rsconnect/
 
 # Also
 .DS_Store
+.Rbuildignore
 *.Rproj
