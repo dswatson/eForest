@@ -18,13 +18,21 @@
 #' Feng, J. and Zhou, Z. (2017). AutoEncoder by Forest. \emph{arXiv} preprint, 
 #' 1709.09018. 
 #' 
+#' @examples
+#' # Encode model
+#' library(ranger)
+#' rf <- ranger(Species ~ ., data = iris)
+#' z <- eForest(rf, iris)
+#' 
+#' # Synthesize
+#' synth <- eForestSynth(rf, iris, z, 100)
+#' 
 #' @export
 #' @import data.table
 #' @import ranger
 #'
 
-# Autoencoder forest function
-eForestSynth <- function(rf, x, z, n_synth) {
+eForestSynth <- function(rf, x, z, nSynth) {
   
   # Prelimz
   num_trees <- rf$num.trees
@@ -42,10 +50,10 @@ eForestSynth <- function(rf, x, z, n_synth) {
   }
   
   # Synthesize
-  keep <- data.table(obs = sample(n, n_synth, replace = TRUE))
+  keep <- data.table(obs = sample(n, nSynth, replace = TRUE))
   synth <- merge(keep, z, by = 'obs', allow.cartesian = TRUE, sort = FALSE)
-  synth[, idx := rep(seq_len(n_synth), each = d)]
-  synth[, fctr := rep(factor_cols, n_synth)]
+  synth[, idx := rep(seq_len(nSynth), each = d)]
+  synth[, fctr := rep(factor_cols, nSynth)]
   synth[, new := runif(.N, min, max)]
   synth[fctr == TRUE, new := round(new)]
   synth <- dcast(synth, idx ~ variable, value.var = 'new')[, idx := NULL]

@@ -25,6 +25,21 @@ hyperrectangle defined by the intersection of leaves in a random forest.
 This function implements the autoencoder forest algorithm proposed by Feng &
 Zhou (2017).
 }
+\examples{
+# Encode supervised random forest
+library(ranger)
+rf <- ranger(Species ~ ., data = iris)
+z <- eForest(rf, iris)
+
+# Encode unsupervised random forest
+n <- nrow(iris)
+x_synth <- as.data.frame(lapply(iris, sample, n, replace = TRUE))
+dat <- rbind(data.frame(y = 1, iris), data.frame(y = 0, x_synth))
+rf <- ranger(y ~ ., data = dat)
+z <- eForest(rf, iris)
+
+
+}
 \references{
 Feng, J. and Zhou, Z. (2017). AutoEncoder by Forest. \emph{arXiv} preprint,
 1709.09018.

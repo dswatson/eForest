@@ -4,7 +4,7 @@
 \alias{eForestSynth}
 \title{Synthesize data from autoencoder forest}
 \usage{
-eForestSynth(rf, x, z, n_synth)
+eForestSynth(rf, x, z, nSynth)
 }
 \arguments{
 \item{rf}{Random forest model object of class \code{ranger}.}
@@ -24,6 +24,16 @@ Takes uniform draws from hyperrectangles computed by an autoencoder forest.
 }
 \details{
 This function creates synthetic samples from an autoencoder forest.
+}
+\examples{
+# Encode model
+library(ranger)
+rf <- ranger(Species ~ ., data = iris)
+z <- eForest(rf, iris)
+
+# Synthesize
+synth <- eForestSynth(rf, iris, z, 100)
+
 }
 \references{
 Feng, J. and Zhou, Z. (2017). AutoEncoder by Forest. \emph{arXiv} preprint,

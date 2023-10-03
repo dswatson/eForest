@@ -19,13 +19,26 @@
 #' Feng, J. and Zhou, Z. (2017). AutoEncoder by Forest. \emph{arXiv} preprint, 
 #' 1709.09018. 
 #' 
+#' @examples
+#' # Encode supervised random forest
+#' library(ranger)
+#' rf <- ranger(Species ~ ., data = iris)
+#' z <- eForest(rf, iris)
+#' 
+#' # Encode unsupervised random forest
+#' n <- nrow(iris)
+#' x_synth <- as.data.frame(lapply(iris, sample, n, replace = TRUE))
+#' dat <- rbind(data.frame(y = 1, iris), data.frame(y = 0, x_synth))
+#' rf <- ranger(y ~ ., data = dat)
+#' z <- eForest(rf, iris)
+#' 
+#' 
 #' @export
 #' @import data.table
 #' @import ranger
 #' @import foreach
 #'
 
-# Autoencoder forest function
 eForest <- function(
     rf,
     x,
@@ -38,7 +51,7 @@ eForest <- function(
   d <- ncol(x)
   factor_cols <- sapply(x, is.factor)
   
-  # Compute bounds
+  # Compute bounds in a single pass (function by Marvin Wright)
   bnd_fn <- function(tree) {
     num_nodes <- length(rf$forest$split.varIDs[[tree]])
     lb <- matrix(-Inf, nrow = num_nodes, ncol = d)
