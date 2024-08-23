@@ -41,7 +41,11 @@ eForestSynth <- function(rf, x, z, nSynth) {
   d <- ncol(x)
   factor_cols <- sapply(x, is.factor)
   factor_names <- colnames(x)[factor_cols]
-  if (any(factor_cols)) {
+  if (sum(factor_cols) == 1L) {
+    lvls <- data.table(
+      variable = factor_names, value = rf$forest$levels
+    )[, number := .I]
+  } else if (sum(factor_cols) > 1L) {
     lvls <- rbindlist(lapply(factor_names, function(j) {
       data.table(
         variable = j, value = rf$forest$covariate.levels[[j]]
